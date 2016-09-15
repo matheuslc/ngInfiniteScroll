@@ -2,12 +2,8 @@ import angular from 'angular';
 
 const MODULE_NAME = 'infinite-scroll';
 
-angular.module(MODULE_NAME, [])
-  .value('THROTTLE_MILLISECONDS', null)
-  .directive('infiniteScroll', [
-    '$rootScope', '$window', '$interval', 'THROTTLE_MILLISECONDS',
-    ($rootScope, $window, $interval, THROTTLE_MILLISECONDS) =>
-  ({
+function infiniteScroll($rootScope, $window, $interval, THROTTLE_MILLISECONDS) {
+  return {
     scope: {
       infiniteScroll: '&',
       infiniteScrollContainer: '=',
@@ -16,8 +12,7 @@ angular.module(MODULE_NAME, [])
       infiniteScrollUseDocumentBottom: '=',
       infiniteScrollListenForEvent: '@',
     },
-
-    link(scope, elem, attrs) {
+    link: function link(scope, elem, attrs) {
       const windowElement = angular.element($window);
 
       let scrollDistance = null;
@@ -264,8 +259,13 @@ angular.module(MODULE_NAME, [])
       checkInterval = $interval(intervalCheck);
       return checkInterval;
     },
-  }),
+  };
+}
 
-  ]);
+infiniteScroll.$inject = ['$rootScope', '$window', '$interval', 'THROTTLE_MILLISECONDS'];
+
+angular.module(MODULE_NAME, [])
+  .value('THROTTLE_MILLISECONDS', null)
+  .directive('infiniteScroll', infiniteScroll);
 
 export default MODULE_NAME;
